@@ -8,6 +8,12 @@ logging:
     de.ba: debug
     root: info
 
+app:
+  basepath: /
+  web:
+    title: "PushMFA-Simulator"
+  env: "dev"
+
 spring:
   application:
     name: "pushmfa-simulator"

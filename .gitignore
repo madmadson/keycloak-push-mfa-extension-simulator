@@ -4,3 +4,6 @@
 /src/main/main.iml
 /src/test/test.iml
 /.vscode/
+
+node_modules/
+/src/main/resources/static/js/

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class InfoController {
 
 
-    @GetMapping(path = "/info")
+    @GetMapping(path = "/")
     public String showInfoPage() {
         return "info-page";
     }
