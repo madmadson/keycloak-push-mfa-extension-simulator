@@ -1,7 +1,6 @@
 import {
   decodeJwt,
   exportJWK,
-  generateKeyPair,
   importJWK,
   JWTHeaderParameters,
   JWTPayload,
@@ -55,58 +54,6 @@ export function unpackEnrollmentToken(token: string): EnrollmentValues | null {
   return { enrollmentId, nonce, userId };
 }
 
-export function unpackLoginConfirmToken(
-  token: string,
-): ConfirmLoginValues | null {
-  const confirmPayload = decodeJwt(token);
-
-  const challengeId = (confirmPayload as any).cid;
-  const userId = (confirmPayload as any).credId;
-
-  if (!challengeId || !userId) {
-    return null;
-  }
-  return { challengeId, userId };
-}
-
-export async function createNewKeyPair() {
-  const { publicKey, privateKey } = await generateKeyPair("RS256", {
-    extractable: true,
-  });
-
-  const publicJwk = await exportJWK(publicKey);
-  const privateJwk = await exportJWK(privateKey);
-
-  publicJwk.alg = "RS256";
-  privateJwk.alg = "RS256";
-  publicJwk.use = "sig";
-  privateJwk.use = "sig";
-
-  const jwkBundle = {
-    public: publicJwk,
-    private: privateJwk,
-  };
-  const blob = new Blob([JSON.stringify(jwkBundle, null, 2)], {
-    type: "application/json",
-  });
-
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "rsa-jwk.json";
-  a.click();
-  URL.revokeObjectURL(url);
-
-}
-
-export async function createConfirmJwt(payload: DpopPayload) {
-  const exp = Math.floor(Date.now() / 1000) + 300;
-  const { privateKey } = await loadJwkFile();
-
-  const protectedHeader = { alg: ALG_RS256, kid: KID, typ: JWT_HEADER_TYPE };
-
-  return await signJwt(payload, protectedHeader, exp, privateKey);
-}
 
 export async function createEnrollmentJwt(
   enrollmentValues: EnrollmentValues,
@@ -142,6 +89,32 @@ export async function createEnrollmentJwt(
   console.debug("Creating Enrollment with credentialId: ", credentialId);
   return await signJwt(jwtPayload, protectedHeader, exp, privateKey);
 }
+
+
+export function unpackLoginConfirmToken(
+  token: string,
+): ConfirmLoginValues | null {
+  const confirmPayload = decodeJwt(token);
+
+  const challengeId = (confirmPayload as any).cid;
+  const userId = (confirmPayload as any).credId;
+
+  if (!challengeId || !userId) {
+    return null;
+  }
+  return { challengeId, userId };
+}
+
+
+export async function createConfirmJwt(payload: DpopPayload) {
+  const exp = Math.floor(Date.now() / 1000) + 300;
+  const { privateKey } = await loadJwkFile();
+
+  const protectedHeader = { alg: ALG_RS256, kid: KID, typ: JWT_HEADER_TYPE };
+
+  return await signJwt(payload, protectedHeader, exp, privateKey);
+}
+
 
 export async function createAccessToken(userId: string, htu: string) {
   const ctxEndIndex = userId?.indexOf(DEVICE_ALIAS);
@@ -191,20 +164,20 @@ export type JwkBundle = {
 };
 
 export async function loadJwkFile() {
-  const base = window.ENV.basePath ?? "/";
-  const res = await fetch(`${base}keys.json`, {
+
+  const res = await fetch(`keys/rsa-jwk.json`, {
     cache: "no-store",
   });
 
   if (!res.ok) {
-    throw new Error("Konnte keys.json nicht laden: " + res.status);
+    throw new Error(`Could not load rsa-jwk: ${res.status}`);
   }
 
   const jwk = (await res.json()) as JwkBundle;
 
   const publicKey = await importJWK(jwk.public, "RS256");
   const privateKey = await importJWK(jwk.private, "RS256");
-  const jwkPub = await exportJWK(publicKey);
+  const jwkPub = jwk.public;
 
   return { privateKey, publicKey, jwkPub };
 }

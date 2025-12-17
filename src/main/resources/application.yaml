@@ -14,10 +14,22 @@ app:
     title: "PushMFA-Simulator"
   env: "dev"
 
+server:
+  port: 5000
+
+security:
+  jwk:
+    private-key-location: classpath:keys/rsa-jwk.json
+
 spring:
   application:
     name: "pushmfa-simulator"
     version: "latest"
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
   threads:
     virtual:
       enabled: true

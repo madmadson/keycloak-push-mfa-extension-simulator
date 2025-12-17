@@ -5,14 +5,7 @@ export const DEVICE_CLIENT_SECRET = "device-client-secret";
 
 export async function postEnrollComplete(enrollReplyToken: string, url?:  URL) {
 
-    let enrollmentCompleteEndpoint = ENROLL_COMPLETE_URL;
-    if (url) {
-        if (url.hostname.includes("localhost")) {
-            enrollmentCompleteEndpoint = "/local" + url.pathname;
-        } else if (url.hostname === "sso.dev.ocp.webapp.idst.ibaintern.de") {
-            enrollmentCompleteEndpoint = "/sso-non-prod" + url.pathname;
-        }
-    }
+  let enrollmentCompleteEndpoint = url ? url.toString() : ENROLL_COMPLETE_URL;
 
   return await post(
       enrollmentCompleteEndpoint,

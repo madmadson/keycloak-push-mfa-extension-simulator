@@ -7,7 +7,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
-
 @SpringBootApplication
 @Slf4j
 public class MainApplication {
@@ -16,13 +15,12 @@ public class MainApplication {
     private final String appVersion;
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder()
-                .sources(MainApplication.class)
-                .run(args);
+        new SpringApplicationBuilder().sources(MainApplication.class).run(args);
     }
 
-    public MainApplication(@Value("${spring.application.name}") String appName,
-                           @Value("${spring.application.version}") String appVersion) {
+    public MainApplication(
+            @Value("${spring.application.name}") String appName,
+            @Value("${spring.application.version}") String appVersion) {
         this.appName = appName;
         this.appVersion = appVersion;
     }

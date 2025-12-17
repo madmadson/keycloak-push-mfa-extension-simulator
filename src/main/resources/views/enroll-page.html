@@ -71,10 +71,18 @@
                         <b>Actions:</b>
                     </label>
                     <div class="mb-4">
-                        <button id="enrollBtn" class="btn btn-primary me-2">Enroll</button>
+                        <button id="enrollBtn" class="btn btn-primary me-2">Enroll Frontend</button>
+                        <br><small class="text-muted">Does only works if mock is deployed on same host (CORS)!</small>
+                        <br><small class="text-muted">rsa-jwk.json must be placed in the mock's key folder! (static/keys)</small>
+                        <br><small class="text-muted">Simulates the frontend enrollment process for Push-MFA, handling device registration on the client side.</small>
+                    </div>
+                     <div class="mb-4">
+                        <button id="enrollBtnBackend" class="btn btn-primary me-2">Enroll Backend</button>
+                        <br><small class="text-muted">* Simulates the backend enrollment process for Push-MFA, processing the enrollment on the server side.</small>
                     </div>
                     <div>
-                        <button id="createJwkBtn" class="btn btn-secondary">Generate JWK (for signing the response)</button>     
+                        <button id="createJwkBtn" class="btn btn-secondary">Generate JWK (for signing the response)</button>
+                        <br><small class="text-muted">Generates a JWK key pair for signing the enrollment response, ensuring cryptographic integrity.</small>
                     </div>
                 </div>
             </div>

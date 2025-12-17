@@ -6,3 +6,7 @@ Simulator for Keycloak push MFA Extension
 ## start local
 
 mvn spring-boot:run
+
+## typescript watchmode
+
+npm run dev
